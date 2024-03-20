@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 
 function Home() {
     const [pesquisa, setPesquisa] = useState("Batman")
@@ -10,7 +11,7 @@ function Home() {
             .then(data => {
                 if (data.Response == 'False') {
                     console.log(data)
-                }else{
+                } else {
                     setFilmes(data)
                 }
             })
@@ -24,17 +25,22 @@ function Home() {
 
     }
 
- if(!filmes)return"Carregando"
-        return (
-            <>
-                <div>
+    if (!filmes) return "Carregando"
+    return (
+        <>
+            <div>
                 <h1>Discolândia </h1>
                 <input onChange={(e) => pesquisarItens(e.target.value)} />
-                    <button>Buscar</button>
-                   <ul>{filmes.Search.map((item) => <li>{item.Title} < img src={item.Poster}/></li>)}</ul>
-                    <h2></h2>
-                </div>
-            </>
-        )
-    }
+                <button>Buscar</button>
+                <ul> {filmes.Search.map((item) =>
+                    <Link to={`detalhes/${item.imdbID}`}>  <li>
+                        {item.Title} < img src={item.Poster} />
+                    </li></Link>)}
+                </ul>
+                <h2></h2>
+            </div>
+        </>
+    )
+}
+
 export default Home
