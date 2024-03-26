@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect,  } from "react"
 import { Link } from "react-router-dom"
 import './Home.css'
 import { motion } from 'framer-motion'
+import Carousel from "./Carousel"
 function Home() {
     const [pesquisa, setPesquisa] = useState("Batman")
     const [filmes, setFilmes] = useState(null)
-    const [width, setWidth] = useState(0)
-    const carrousel = useRef()
+  
 
 
 
@@ -31,10 +31,7 @@ function Home() {
     }
 
 
-    useEffect(() => {
-        setWidth(carrousel.current?.scrollWidth - carrousel.current?.offsetWidth)
-        console.log("Valor", width)
-    }, [width])
+ 
 
     if (!filmes) return "Carregando"
 
@@ -54,26 +51,7 @@ function Home() {
                     </div>
                 </header>
 
-                <motion.div className="carrousel"
-                    ref={carrousel}
-                    
-                >
-                    <motion.div
-                        className="inner"
-                        drag="x"
-                        dragConstraints={{ right: 0, left: -width }}>
-                        {filmes.Search.map((item) =>
-                            <motion.div className="item" >
-                                <Link whileTap={{ cursor: "grabbing" }} className="link" to={`detalhes/${item.imdbID}`}>
-
-                                    < img src={item.Poster} />
-                                   <button>Detalhes</button>
-
-                                </Link>
-                            </motion.div>)}
-                    </motion.div>
-
-                </motion.div>
+                <Carousel filmes={filmes}/>
 
                 <ul> {filmes.Search.map((item) =>
                     <Link to={`detalhes/${item.imdbID}`}>  <li>
