@@ -1,66 +1,50 @@
-import { useState, useEffect,  } from "react"
-import { Link } from "react-router-dom"
-import './Home.css'
-import { motion } from 'framer-motion'
-import Carousel from "./Carousel"
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "./Home.css";
+
 function Home() {
-    const [pesquisa, setPesquisa] = useState("Batman")
-    const [filmes, setFilmes] = useState(null)
-  
-
-
+    const [times, setTimes] = useState([]);
 
     useEffect(() => {
-        fetch(`https://www.omdbapi.com/?apikey=28d0dee8&type=movie&s=${pesquisa}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.Response == 'False') {
-                    console.log(data)
+        fetch(`https://api.cartola.globo.com/clubes`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // Verifica se data é um objeto
+                if (typeof data === "object" && !Array.isArray(data)) {
+                    // Transforma o objeto em um array
+                    const timesArray = Object.values(data);
+                    setTimes(timesArray);
                 } else {
-                    setFilmes(data)
+                    console.error("A resposta da API não é um objeto válido.");
                 }
-            })
+            });
+    }, []);
 
-    }, [pesquisa])
-
-    const pesquisarItens = (valorPesquisa) => {
-
-        const valorInput = valorPesquisa.split("")
-        if (valorInput.length > 2) return setPesquisa(valorPesquisa)
-
+    if (!times || !Array.isArray(times)) {
+        return "Carregando"; // ou outra mensagem de carregamento
     }
-
-
- 
-
-    if (!filmes) return "Carregando"
-
-
 
     return (
         <>
-            <div className="container">
+            <h1>prova</h1>
+            <div>
+                {times.map((item) => (
+                    <div className="time-foto" key={item.id}>
+                        <img src={item.escudos["45x45"]} />
+                        <Link to={`detalhes/${item.id}`}>
+                            <div className="times-nome">
+                                <h2>{item.nome}</h2>
+                                <h3>{item.apelido}</h3>
+                            </div>
 
-                <header style={{ backgroundImage: 'url("https://img.freepik.com/vetores-premium/paisagem-dos-planetas-espaciais-da-galaxia-ai-gerou-cena-de-jogo-de-pixels-de-8-bits-mundo-virtual-inspirado-em-retro-com-charme-nostalgico-pixelado-superficie-do-planeta-alienigena-com-paisagem-estelar-do-universo-distante-nivel-de-jogo-2d_8071-54914.jpg?w=826")', height: '50vh', backgroundRepeat: "no-repeat", backgroundSize: 'cover' }}>
-                    <div className="inicio">
-                        <motion.h1 >NebulaFlix</motion.h1>
-                        <div className="pesquisa">
-                            <input placeholder="Pesquise por filmes, séries..." onChange={(e) => pesquisarItens(e.target.value)} />
-                            <button>Buscar</button>
-                        </div>
+                        </Link>
                     </div>
-                </header>
-
-                <Carousel filmes={filmes}/>
-
-                <ul> {filmes.Search.map((item) =>
-                    <Link to={`detalhes/${item.imdbID}`}>  <li>
-                        <span className="titulo">{item.Title} </span>< img src={item.Poster} />
-                    </li></Link>)}
-                </ul>
+                ))}
             </div>
         </>
-    )
+    );
 }
 
-export default Home
+export default Home;
+

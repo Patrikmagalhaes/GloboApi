@@ -3,33 +3,48 @@ import { useParams } from "react-router-dom"
 import "./Detalhes.css"
 
 function Detalhes() {
-    const { imdbID } = useParams()
-    const [filme, setFilme] = useState(null)
+    const { id } = useParams()
+    const [times, setTimes] = useState(null)
+    console.log(id)
 
     useEffect(() => {
-        fetch(`https://www.omdbapi.com/?apikey=28d0dee8&type=movie&i=${imdbID}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.Response == 'False') {
-                    console.log(data)
+        fetch(`https://api.cartola.globo.com/atletas/mercado/${id}`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                // Verifica se data é um objeto
+                if (typeof data === "object" && !Array.isArray(data)) {
+                    // Transforma o objeto em um array
+                    const timesArray = Object.values(data);
+                    setTimes(timesArray);
                 } else {
-                    setFilme(data)
+                    console.error("A resposta da API não é um objeto válido.");
                 }
-            })
+            });
+    }, []);
 
-    }, [filme])
-
-    if (!filme) return "Carregando"
+    if (!times) return "Carregando"
     return (
         <>
             <div className="container">
-                <h1>Discolândia </h1>F
+                <h1>Discolândia </h1>
+
                 <div>
-                    <img src={filme.Poster} />
-                    <h1>{filme.Title}</h1>
-                </div>
+                {times.map((item) => (
+                    <div className="time-foto" key={item.id}>
+                     
+                     
+                            <div className="times-nome">
+                                <h2>{item.atletas.apelido}</h2>
+                            
+                            </div>
+
+                       
+                    </div>
+                ))}
             </div>
 
+            </div>
         </>
     )
 }
