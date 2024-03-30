@@ -1,49 +1,47 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
-import "./Detalhes.css"
-
+import Header from "./Header";
 function Detalhes() {
-    const { id } = useParams()
+    const { id, nome } = useParams()
     const [times, setTimes] = useState(null)
-    console.log(id)
+
 
     useEffect(() => {
         fetch(`https://api.cartola.globo.com/atletas/mercado/${id}`)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
-                // Verifica se data é um objeto
-                if (typeof data === "object" && !Array.isArray(data)) {
-                    // Transforma o objeto em um array
-                    const timesArray = Object.values(data);
-                    setTimes(timesArray);
-                } else {
-                    console.error("A resposta da API não é um objeto válido.");
-                }
+                setTimes(data);
+                console.log(data)
             });
     }, []);
 
-    if (!times) return "Carregando"
+    const mudarResolucao = (imagem) => {
+
+        const formato = imagem.replace('FORMATO', '220x220')
+
+        return formato
+
+    }
+
+    if (!times || times == null) return "Carregando"
     return (
         <>
+            <Header />
             <div className="container">
-                <h1>Discolândia </h1>
 
-                <div>
-                {times.map((item) => (
-                    <div className="time-foto" key={item.id}>
-                     
-                     
-                            <div className="times-nome">
-                                <h2>{item.atletas.apelido}</h2>
-                            
+                <div >
+                    <h2 className="titulo">Jogadores do {nome}</h2>
+                    {times.atletas.map((item) => (
+                        <div className="time-foto" key={item.id}>
+
+                            <div className="flex">
+
+                                <img className="jogador" src={mudarResolucao(item.foto)} alt="" />
+                                <h3 >{item.apelido}</h3>
                             </div>
-
-                       
-                    </div>
-                ))}
-            </div>
-
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     )

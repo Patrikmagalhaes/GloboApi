@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
+import Header from "./Header";
 
 function Home() {
     const [times, setTimes] = useState([]);
@@ -10,9 +11,9 @@ function Home() {
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                // Verifica se data é um objeto
+       
                 if (typeof data === "object" && !Array.isArray(data)) {
-                    // Transforma o objeto em um array
+             
                     const timesArray = Object.values(data);
                     setTimes(timesArray);
                 } else {
@@ -22,17 +23,18 @@ function Home() {
     }, []);
 
     if (!times || !Array.isArray(times)) {
-        return "Carregando"; // ou outra mensagem de carregamento
+        return "Carregando";
     }
 
     return (
         <>
-            <h1>prova</h1>
-            <div>
+
+        <Header />
+            <div className="container">
                 {times.map((item) => (
-                    <div className="time-foto" key={item.id}>
+                    <div className="flex time-foto " key={item.id}>
                         <img src={item.escudos["45x45"]} />
-                        <Link to={`detalhes/${item.id}`}>
+                        <Link to={`detalhes/${item.nome}/${item.id}`}>
                             <div className="times-nome">
                                 <h2>{item.nome}</h2>
                                 <h3>{item.apelido}</h3>
